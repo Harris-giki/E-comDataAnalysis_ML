@@ -12,10 +12,10 @@
     <div class="section">
         <h3>Procedure Overview</h3>
         <ol>
-            <li><strong>Data Loading & Exploration:</strong> Load, inspect, and visualize data for initial insights.</li>
-            <li><strong>Feature Selection & Model Setup:</strong> Select features and train a linear regression model.</li>
-            <li><strong>Model Evaluation:</strong> Use error metrics and visualization for performance analysis.</li>
-            <li><strong>Insights:</strong> Analyze feature impact and residual distribution.</li>
+            <li><strong>Data Loading & Exploration:</strong> Load the dataset, examine the structure, and perform initial statistical analyses. Visualize key relationships between features and target variables to gain insights.</li>
+            <li><strong>Feature Engineering and Model Selection:</strong> Select relevant features based on correlation analysis and apply a linear regression model using scikit-learn to predict the target variable.</li>
+            <li><strong>Model Evaluation:</strong> Assess model performance using metrics like Mean Absolute Error, Mean Squared Error, and Root Mean Squared Error. Visualize predictions and residuals to analyze the model's performance.</li>
+            <li><strong>Interpretation and Insights:</strong> Interpret model coefficients to understand feature importance. Assess residual distribution to ensure model assumptions hold.</li>
         </ol>
     </div>
     <div class="section">
@@ -87,4 +87,4 @@ sns.histplot(residuals, bins=30)</code></pre>
         </ol>
     </div>
 </body>
-</html>
+
