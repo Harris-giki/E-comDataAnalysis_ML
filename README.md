@@ -3,7 +3,7 @@
     <h2>README</h2>
     <div class="section">
         <h3>Project Purpose</h3>
-        <p>This project analyzes customer behavior in an e-commerce setting to predict yearly spending using linear regression. It involves data exploration, feature engineering, model training, and insights on customer spending patterns.</p>
+        <p>In this model, we are predicting how much an e-commerce customer will spend in a year using data like their time spent on the website and how long they've been a member. We load and explore the data, select the most relevant factors (features), and build a linear regression model to make predictions. We then evaluate the model’s accuracy using error metrics, visualize the results, and interpret which features have the most impact on spending. The goal is to create a model that can predict future spending based on customer behavior.</p>
     </div>
     <div class="section">
         <h3>Data Requirements</h3>
