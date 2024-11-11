@@ -21,7 +21,7 @@ lm.fit(X_train, y_train)
 st.title('E-commerce Yearly Spend Prediction')
 
 st.write("Enter the details below:")
-
+st.write("Each feature is measured in the units of minutes of time")
 # User input fields
 avg_session_length = st.number_input('Avg. Session Length', min_value=0.0, value=33.0, step=0.1)
 time_on_app = st.number_input('Time on App', min_value=0.0, value=12.0, step=0.1)
