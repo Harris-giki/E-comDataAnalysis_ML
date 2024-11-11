@@ -1,70 +1,107 @@
-import pandas as pd #provides data exploratory and manipulation options/self explanatory with use
-import matplotlib.pyplot as plt #would allow basic plotting of data set
-import seaborn as sns #highlevel interface plots with easy linear regression plots
-df = pd.read_csv('/ecommerce.csv') #loading the data into the colab notebook
-df.head() #displaying the data set
-df.info() #gives more information about the data set
-df.describe() #give more statistical information about the data
-#EDA
-#Exploratory Data Analysis
-
-sns.jointplot(x='Time on Website', y='Yearly Amount Spent', data=df, alpha=0.5)
-# alpha is used to provide greator opacity based on more occurance of points
-sns.jointplot(x='Time on App', y='Yearly Amount Spent', data=df, alpha=0.5)
-# we would see a faint co-relation between both variable
-sns.pairplot(df, kind='scatter', plot_kws={'alpha': 0.4})
-#used to produce scatter plots between each variable of the dataset, letting co-relation intuition being better
-#kind - controls type of plot, alpha - controls opacity relative to occurance
-sns.lmplot(x='Length of Membership', y='Yearly Amount Spent', data=df, scatter_kws={'alpha': 0.3})
-#creates a linear regression plot with a regression line and confidence interval
-#sklearn is a machine learning models library where we can simply import and use the models
-from sklearn.model_selection import train_test_split
-#dividing our dataset into a training set and a testing set
-x = df[['Avg. Session Length', 'Time on App', 'Time on Website', 'Length of Membership']]
-y = df['Yearly Amount Spent']
-# fetching data as x and y list variables
-#creating training and testing split
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
-#test_size being 0.3 means 30% of the data is for testing while 70% is for training
-#the random state controls the seed value to randomize the splitting of data everytime we run the code
+# Importing necessary libraries
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.linear_model import LinearRegression
-#importing the linear regression model
-lm=LinearRegression()
-#creating a linear regression object
-lm.fit(X_train, y_train)
-#fitting the linear regression model to the training data
-#finding the optimal parameters/coeff that would describe the importance of each feature in the polynomic linear regression model
-#knowing these coeff would make the model rightfully use each coeff to describe the imp of each feature while predicting output
-lm.coef_   
-cdf=pd.DataFrame(lm.coef_, x.columns, columns=['Coeff'])
-print(cdf) 
-#predictions
-predictions=lm.predict(X_test)
-#the outputs that the model thinks would appear when we would use the input of the X_test
-predictions      
-#comparing the predicted values with the actual outputs
-sns.scatterplot(x=predictions, y=y_test)
-plt.xlabel('Predicted')
-plt.ylabel('Actual')
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import math
-#this metric calculates the average absolute difference between the predicted values (predictions) and the actual values (y_test).
-print ("mean absolute error:", mean_absolute_error(y_test, predictions))
-#This metric calculates the average of the squared differences between the predicted and actual values.
-#By squaring the errors, MSE gives more weight to larger errors, which can be helpful if you want to penalize larger deviations.
-print ("mean squared error:", mean_squared_error(y_test, predictions))
-#RMSE is simply the square root of MSE, bringing the units back to the original scale of the target variable.
-#RMSE is often used because it penalizes larger errors more heavily (like MSE) while remaining interpretable on the same scale as the data.
-print ("root mean squared error:", math.sqrt(mean_squared_error(y_test, predictions)))
-#residuals
-#differences between the actual values and the predicted values
-residuals=y_test-predictions
-#Positive Residuals: Indicate that the model underestimated the actual value.
-#Negative Residuals: Indicate that the model overestimated the actual value.
-#Zero Residual: Means the model’s prediction was exactly correct for that instance.
-print(residuals)
-sns.distplot((y_test-predictions), bins=50)
-import pylab
-import scipy.stats as stats
-stats.probplot(residuals, dist="norm", plot=pylab)
-pylab.show()
+
+# Load and display dataset
+@st.cache
+def load_data():
+    df = pd.read_csv('/ecommerce.csv')  # Make sure to update the path to your dataset
+    return df
+
+df = load_data()
+
+# Title of the app
+st.title('E-commerce Yearly Amount Spent Prediction')
+
+# Display dataset overview
+st.subheader('Dataset Overview')
+st.write(df.head())  # Display the first few rows of the dataset
+st.write(df.describe())  # Display statistical summary of the dataset
+
+# EDA: Exploratory Data Analysis Visualizations
+st.subheader('Exploratory Data Analysis')
+
+# Jointplot for Time on Website vs Yearly Amount Spent
+st.write('**Jointplot between Time on Website and Yearly Amount Spent**')
+sns.jointplot(x='Time on Website', y='Yearly Amount Spent', data=df, alpha=0.5)
+st.pyplot()
+
+# Jointplot for Time on App vs Yearly Amount Spent
+st.write('**Jointplot between Time on App and Yearly Amount Spent**')
+sns.jointplot(x='Time on App', y='Yearly Amount Spent', data=df, alpha=0.5)
+st.pyplot()
+
+# Pairplot for all features
+st.write('**Pairplot for All Features**')
+sns.pairplot(df, kind='scatter', plot_kws={'alpha': 0.4})
+st.pyplot()
+
+# lmplot for Length of Membership vs Yearly Amount Spent
+st.write('**Linear Regression Plot between Length of Membership and Yearly Amount Spent**')
+sns.lmplot(x='Length of Membership', y='Yearly Amount Spent', data=df, scatter_kws={'alpha': 0.3})
+st.pyplot()
+
+# Feature Selection using Correlation Analysis
+st.subheader('Feature Selection (Correlation Analysis)')
+correlation_matrix = df.corr()
+st.write(correlation_matrix)
+
+# Select top features for prediction
+top_features = ['Avg. Session Length', 'Time on App', 'Time on Website', 'Length of Membership']
+X = df[top_features]
+y = df['Yearly Amount Spent']
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Train the Linear Regression Model
+lm = LinearRegression()
+lm.fit(X_train, y_train)
+
+# Display model coefficients
+st.subheader('Model Coefficients')
+coeff_df = pd.DataFrame(lm.coef_, top_features, columns=['Coefficient'])
+st.write(coeff_df)
+
+# Making predictions
+predictions = lm.predict(X_test)
+
+# Displaying performance metrics
+st.subheader('Performance Metrics')
+
+mae = mean_absolute_error(y_test, predictions)
+mse = mean_squared_error(y_test, predictions)
+rmse = math.sqrt(mse)
+
+st.write(f"Mean Absolute Error: {mae}")
+st.write(f"Mean Squared Error: {mse}")
+st.write(f"Root Mean Squared Error: {rmse}")
+
+# Residuals Analysis
+st.subheader('Residuals Analysis')
+residuals = y_test - predictions
+sns.histplot(residuals, bins=50, kde=True)
+st.pyplot()
+
+# Allow users to input new data for prediction
+st.subheader('Predict Yearly Amount Spent')
+avg_session_length = st.number_input('Avg. Session Length (in minutes)', min_value=0.0, value=33.0)
+time_on_app = st.number_input('Time on App (in minutes)', min_value=0.0, value=12.0)
+time_on_website = st.number_input('Time on Website (in minutes)', min_value=0.0, value=35.0)
+length_of_membership = st.number_input('Length of Membership (in years)', min_value=0.0, value=4.0)
+
+# Create a DataFrame for the user input
+user_input = pd.DataFrame([[avg_session_length, time_on_app, time_on_website, length_of_membership]], 
+                          columns=top_features)
+
+# Predict the output using the trained model
+user_prediction = lm.predict(user_input)
+
+# Display the prediction
+st.write(f'Predicted Yearly Amount Spent: ${user_prediction[0]:.2f}')
