@@ -11,7 +11,7 @@ import math
 # Load and display dataset
 @st.cache
 def load_data():
-    df = pd.read_csv('/ecommerce.csv')  # Make sure to update the path to your dataset
+    df = pd.read_csv('ecommerce.csv')  # Make sure to update the path to your dataset
     return df
 
 df = load_data()
